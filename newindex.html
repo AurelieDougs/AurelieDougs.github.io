@@ -1,0 +1,598 @@
+import React, { useState } from 'react';
+import { 
+  BarChart, 
+  Bar, 
+  LineChart,
+  Line,
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell
+} from 'recharts';
+
+// Données de simulation pour le baromètre économique
+const sectorData = {
+  'Tous secteurs': {
+    creations: [
+      { trimestre: 'T1 2023', nombre: 320 },
+      { trimestre: 'T2 2023', nombre: 350 },
+      { trimestre: 'T3 2023', nombre: 380 },
+      { trimestre: 'T4 2023', nombre: 400 },
+      { trimestre: 'T1 2024', nombre: 425 },
+      { trimestre: 'T2 2024', nombre: 450 }
+    ],
+    dissolutions: [
+      { trimestre: 'T1 2023', nombre: 80 },
+      { trimestre: 'T2 2023', nombre: 70 },
+      { trimestre: 'T3 2023', nombre: 65 },
+      { trimestre: 'T4 2023', nombre: 60 },
+      { trimestre: 'T1 2024', nombre: 55 },
+      { trimestre: 'T2 2024', nombre: 50 }
+    ],
+    chiffreAffaire: [
+      { trimestre: 'T1 2023', montant: 22000 },
+      { trimestre: 'T2 2023', montant: 24500 },
+      { trimestre: 'T3 2023', montant: 26000 },
+      { trimestre: 'T4 2023', montant: 27500 },
+      { trimestre: 'T1 2024', montant: 29000 },
+      { trimestre: 'T2 2024', montant: 31000 }
+    ],
+    remuneration: [
+      { trimestre: 'T1 2023', montant: 850 },
+      { trimestre: 'T2 2023', montant: 900 },
+      { trimestre: 'T3 2023', montant: 950 },
+      { trimestre: 'T4 2023', montant: 1000 },
+      { trimestre: 'T1 2024', montant: 1050 },
+      { trimestre: 'T2 2024', montant: 1100 }
+    ]
+  },
+  'Consultants': {
+    creations: [
+      { trimestre: 'T1 2023', nombre: 85 },
+      { trimestre: 'T2 2023', nombre: 95 },
+      { trimestre: 'T3 2023', nombre: 100 },
+      { trimestre: 'T4 2023', nombre: 110 },
+      { trimestre: 'T1 2024', nombre: 120 },
+      { trimestre: 'T2 2024', nombre: 130 }
+    ],
+    dissolutions: [
+      { trimestre: 'T1 2023', nombre: 20 },
+      { trimestre: 'T2 2023', nombre: 18 },
+      { trimestre: 'T3 2023', nombre: 15 },
+      { trimestre: 'T4 2023', nombre: 12 },
+      { trimestre: 'T1 2024', nombre: 10 },
+      { trimestre: 'T2 2024', nombre: 9 }
+    ],
+    chiffreAffaire: [
+      { trimestre: 'T1 2023', montant: 8500 },
+      { trimestre: 'T2 2023', montant: 9200 },
+      { trimestre: 'T3 2023', montant: 9800 },
+      { trimestre: 'T4 2023', montant: 10500 },
+      { trimestre: 'T1 2024', montant: 11200 },
+      { trimestre: 'T2 2024', montant: 12000 }
+    ],
+    remuneration: [
+      { trimestre: 'T1 2023', montant: 1200 },
+      { trimestre: 'T2 2023', montant: 1300 },
+      { trimestre: 'T3 2023', montant: 1400 },
+      { trimestre: 'T4 2023', montant: 1500 },
+      { trimestre: 'T1 2024', montant: 1600 },
+      { trimestre: 'T2 2024', montant: 1700 }
+    ]
+  },
+  'E-commerce': {
+    creations: [
+      { trimestre: 'T1 2023', nombre: 45 },
+      { trimestre: 'T2 2023', nombre: 50 },
+      { trimestre: 'T3 2023', nombre: 55 },
+      { trimestre: 'T4 2023', nombre: 60 },
+      { trimestre: 'T1 2024', nombre: 65 },
+      { trimestre: 'T2 2024', nombre: 70 }
+    ],
+    dissolutions: [
+      { trimestre: 'T1 2023', nombre: 15 },
+      { trimestre: 'T2 2023', nombre: 12 },
+      { trimestre: 'T3 2023', nombre: 10 },
+      { trimestre: 'T4 2023', nombre: 8 },
+      { trimestre: 'T1 2024', nombre: 7 },
+      { trimestre: 'T2 2024', nombre: 6 }
+    ],
+    chiffreAffaire: [
+      { trimestre: 'T1 2023', montant: 5500 },
+      { trimestre: 'T2 2023', montant: 6000 },
+      { trimestre: 'T3 2023', montant: 6500 },
+      { trimestre: 'T4 2023', montant: 7000 },
+      { trimestre: 'T1 2024', montant: 7500 },
+      { trimestre: 'T2 2024', montant: 8000 }
+    ],
+    remuneration: [
+      { trimestre: 'T1 2023', montant: 800 },
+      { trimestre: 'T2 2023', montant: 850 },
+      { trimestre: 'T3 2023', montant: 900 },
+      { trimestre: 'T4 2023', montant: 950 },
+      { trimestre: 'T1 2024', montant: 1000 },
+      { trimestre: 'T2 2024', montant: 1050 }
+    ]
+  },
+  'VTC': {
+    creations: [
+      { trimestre: 'T1 2023', nombre: 25 },
+      { trimestre: 'T2 2023', nombre: 30 },
+      { trimestre: 'T3 2023', nombre: 35 },
+      { trimestre: 'T4 2023', nombre: 40 },
+      { trimestre: 'T1 2024', nombre: 45 },
+      { trimestre: 'T2 2024', nombre: 50 }
+    ],
+    dissolutions: [
+      { trimestre: 'T1 2023', nombre: 10 },
+      { trimestre: 'T2 2023', nombre: 8 },
+      { trimestre: 'T3 2023', nombre: 7 },
+      { trimestre: 'T4 2023', nombre: 5 },
+      { trimestre: 'T1 2024', nombre: 4 },
+      { trimestre: 'T2 2024', nombre: 3 }
+    ],
+    chiffreAffaire: [
+      { trimestre: 'T1 2023', montant: 3500 },
+      { trimestre: 'T2 2023', montant: 4000 },
+      { trimestre: 'T3 2023', montant: 4500 },
+      { trimestre: 'T4 2023', montant: 5000 },
+      { trimestre: 'T1 2024', montant: 5500 },
+      { trimestre: 'T2 2024', montant: 6000 }
+    ],
+    remuneration: [
+      { trimestre: 'T1 2023', montant: 600 },
+      { trimestre: 'T2 2023', montant: 650 },
+      { trimestre: 'T3 2023', montant: 700 },
+      { trimestre: 'T4 2023', montant: 750 },
+      { trimestre: 'T1 2024', montant: 800 },
+      { trimestre: 'T2 2024', montant: 850 }
+    ]
+  },
+  'Formateurs': {
+    creations: [
+      { trimestre: 'T1 2023', nombre: 35 },
+      { trimestre: 'T2 2023', nombre: 40 },
+      { trimestre: 'T3 2023', nombre: 45 },
+      { trimestre: 'T4 2023', nombre: 50 },
+      { trimestre: 'T1 2024', nombre: 55 },
+      { trimestre: 'T2 2024', nombre: 60 }
+    ],
+    dissolutions: [
+      { trimestre: 'T1 2023', nombre: 12 },
+      { trimestre: 'T2 2023', nombre: 10 },
+      { trimestre: 'T3 2023', nombre: 8 },
+      { trimestre: 'T4 2023', nombre: 7 },
+      { trimestre: 'T1 2024', nombre: 6 },
+      { trimestre: 'T2 2024', nombre: 5 }
+    ],
+    chiffreAffaire: [
+      { trimestre: 'T1 2023', montant: 4500 },
+      { trimestre: 'T2 2023', montant: 5000 },
+      { trimestre: 'T3 2023', montant: 5500 },
+      { trimestre: 'T4 2023', montant: 6000 },
+      { trimestre: 'T1 2024', montant: 6500 },
+      { trimestre: 'T2 2024', montant: 7000 }
+    ],
+    remuneration: [
+      { trimestre: 'T1 2023', montant: 750 },
+      { trimestre: 'T2 2023', montant: 800 },
+      { trimestre: 'T3 2023', montant: 850 },
+      { trimestre: 'T4 2023', montant: 900 },
+      { trimestre: 'T1 2024', montant: 950 },
+      { trimestre: 'T2 2024', montant: 1000 }
+    ]
+  }
+};
+
+// Répartition par secteur pour la visualisation en camembert
+const sectorDistribution = [
+  { name: 'Consultants', value: 32 },
+  { name: 'E-commerce', value: 18 },
+  { name: 'VTC', value: 15 },
+  { name: 'Formateurs', value: 14 },
+  { name: 'SCI', value: 10 },
+  { name: 'Autres', value: 11 }
+];
+
+// Couleurs pour le graphique camembert
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+
+const EconomicBarometer = () => {
+  const [selectedSector, setSelectedSector] = useState('Tous secteurs');
+  const [selectedIndicator, setSelectedIndicator] = useState('creations');
+  const [selectedPeriod, setSelectedPeriod] = useState('all');
+  const [selectedView, setSelectedView] = useState('bar');
+
+  const sectors = Object.keys(sectorData);
+  
+  const indicators = [
+    { key: 'creations', label: 'Créations d\'entreprises' },
+    { key: 'dissolutions', label: 'Dissolutions' },
+    { key: 'chiffreAffaire', label: 'Chiffre d\'Affaire (€)' },
+    { key: 'remuneration', label: 'Rémunération Moyenne (€)' }
+  ];
+
+  const periods = [
+    { key: 'all', label: 'Toutes les périodes' },
+    { key: '2023', label: '2023' },
+    { key: '2024', label: '2024' },
+    { key: 'last4', label: '4 derniers trimestres' }
+  ];
+
+  // Filtrer les données en fonction de la période sélectionnée
+  const filterDataByPeriod = (data) => {
+    if (selectedPeriod === 'all') return data;
+    
+    return data.filter(item => {
+      if (selectedPeriod === '2023') return item.trimestre.includes('2023');
+      if (selectedPeriod === '2024') return item.trimestre.includes('2024');
+      if (selectedPeriod === 'last4') {
+        const allData = sectorData[selectedSector][selectedIndicator];
+        const lastFourIndices = allData.length >= 4 
+          ? allData.slice(allData.length - 4) 
+          : allData;
+        return lastFourIndices.some(lastItem => lastItem.trimestre === item.trimestre);
+      }
+      return true;
+    });
+  };
+
+  const currentData = filterDataByPeriod(sectorData[selectedSector]?.[selectedIndicator] || []);
+  
+  // Calculer les statistiques clés
+  const getKeyStats = () => {
+    if (!currentData.length) return { total: 0, average: 0, growth: 0 };
+    
+    const valueKey = selectedIndicator === 'creations' || selectedIndicator === 'dissolutions' ? 'nombre' : 'montant';
+    const total = currentData.reduce((sum, item) => sum + item[valueKey], 0);
+    const average = total / currentData.length;
+    
+    // Calculer la croissance en pourcentage si plus d'un point de données
+    let growth = 0;
+    if (currentData.length > 1) {
+      const firstValue = currentData[0][valueKey];
+      const lastValue = currentData[currentData.length - 1][valueKey];
+      growth = ((lastValue - firstValue) / firstValue) * 100;
+    }
+    
+    return { total, average, growth };
+  };
+  
+  const keyStats = getKeyStats();
+
+  // Création de données comparatives pour les secteurs
+  const getComparativeSectorData = () => {
+    const comparativeData = [];
+    
+    if (selectedIndicator && sectors.length) {
+      const valueKey = selectedIndicator === 'creations' || selectedIndicator === 'dissolutions' ? 'nombre' : 'montant';
+      
+      sectors.forEach(sector => {
+        if (sector === 'Tous secteurs') return; // Exclure "Tous secteurs" de la comparaison
+        
+        const sectorDataForIndicator = sectorData[sector]?.[selectedIndicator] || [];
+        const filteredData = filterDataByPeriod(sectorDataForIndicator);
+        
+        if (filteredData.length) {
+          const latestValue = filteredData[filteredData.length - 1][valueKey];
+          comparativeData.push({
+            name: sector,
+            value: latestValue
+          });
+        }
+      });
+    }
+    
+    return comparativeData;
+  };
+
+  return (
+    <div className="bg-gray-50 min-h-screen">
+      {/* En-tête de navigation */}
+      <header className="bg-white shadow-md">
+        <div className="container mx-auto flex justify-between items-center py-4 px-6">
+          <div className="flex items-center">
+            <img src="/api/placeholder/150/50" alt="Logo" className="h-10 mr-6" />
+            <h2 className="text-xl font-semibold text-blue-600">Baromètre Économique</h2>
+          </div>
+          <div className="flex items-center space-x-4">
+            <a href="#" className="text-gray-600 hover:text-blue-600">Méthodologie</a>
+            <a href="#" className="text-gray-600 hover:text-blue-600">Archives</a>
+            <a href="#" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+              Contacter un expert
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto p-6">
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+          <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
+            Baromètre Économique des Indépendants et TPE
+          </h1>
+          <p className="text-center text-gray-600 mb-6">
+            Analyse basée sur les données de 25 000 clients actifs | Dernier trimestre: T2 2024
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+              <h3 className="text-lg font-semibold text-blue-800 mb-2">Créations d'entreprises</h3>
+              <div className="text-3xl font-bold text-blue-600">+{sectorData['Tous secteurs'].creations[sectorData['Tous secteurs'].creations.length-1].nombre}</div>
+              <div className="text-sm text-blue-600 mt-1">
+                +5.8% vs trimestre précédent
+              </div>
+            </div>
+            
+            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+              <h3 className="text-lg font-semibold text-green-800 mb-2">Chiffre d'affaires moyen</h3>
+              <div className="text-3xl font-bold text-green-600">{sectorData['Tous secteurs'].chiffreAffaire[sectorData['Tous secteurs'].chiffreAffaire.length-1].montant} €</div>
+              <div className="text-sm text-green-600 mt-1">
+                +6.9% vs trimestre précédent
+              </div>
+            </div>
+            
+            <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+              <h3 className="text-lg font-semibold text-purple-800 mb-2">Rémunération moyenne</h3>
+              <div className="text-3xl font-bold text-purple-600">{sectorData['Tous secteurs'].remuneration[sectorData['Tous secteurs'].remuneration.length-1].montant} €</div>
+              <div className="text-sm text-purple-600 mt-1">
+                +4.8% vs trimestre précédent
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Secteur d'activité</label>
+              <select 
+                value={selectedSector} 
+                onChange={(e) => setSelectedSector(e.target.value)}
+                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+              >
+                {sectors.map(sector => (
+                  <option key={sector} value={sector}>{sector}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Indicateur</label>
+              <select 
+                value={selectedIndicator} 
+                onChange={(e) => setSelectedIndicator(e.target.value)}
+                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+              >
+                {indicators.map(indicator => (
+                  <option key={indicator.key} value={indicator.key}>
+                    {indicator.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Période</label>
+              <select 
+                value={selectedPeriod} 
+                onChange={(e) => setSelectedPeriod(e.target.value)}
+                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+              >
+                {periods.map(period => (
+                  <option key={period.key} value={period.key}>
+                    {period.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Type de graphique</label>
+              <div className="flex border rounded-md overflow-hidden">
+                <button 
+                  className={`flex-1 py-2 ${selectedView === 'bar' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700'}`}
+                  onClick={() => setSelectedView('bar')}
+                >
+                  Barres
+                </button>
+                <button 
+                  className={`flex-1 py-2 ${selectedView === 'line' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700'}`}
+                  onClick={() => setSelectedView('line')}
+                >
+                  Lignes
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div className="md:col-span-3 bg-white rounded-lg p-4 shadow border border-gray-200">
+              <h3 className="text-lg font-semibold mb-4 text-gray-700">
+                {indicators.find(i => i.key === selectedIndicator)?.label} - {selectedSector}
+              </h3>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  {selectedView === 'bar' ? (
+                    <BarChart data={currentData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                      <XAxis dataKey="trimestre" stroke="#666" />
+                      <YAxis stroke="#666" />
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: 'white', borderColor: '#blue-500' }}
+                        labelStyle={{ color: '#1a202c' }}
+                      />
+                      <Legend />
+                      <Bar 
+                        dataKey={selectedIndicator === 'creations' || selectedIndicator === 'dissolutions' ? 'nombre' : 'montant'} 
+                        fill="#3B82F6" 
+                        name={indicators.find(i => i.key === selectedIndicator)?.label}
+                        barSize={40}
+                      />
+                    </BarChart>
+                  ) : (
+                    <LineChart data={currentData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                      <XAxis dataKey="trimestre" stroke="#666" />
+                      <YAxis stroke="#666" />
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: 'white', borderColor: '#blue-500' }}
+                        labelStyle={{ color: '#1a202c' }}
+                      />
+                      <Legend />
+                      <Line 
+                        type="monotone"
+                        dataKey={selectedIndicator === 'creations' || selectedIndicator === 'dissolutions' ? 'nombre' : 'montant'} 
+                        stroke="#3B82F6" 
+                        name={indicators.find(i => i.key === selectedIndicator)?.label}
+                        strokeWidth={2}
+                        dot={{ r: 4 }}
+                        activeDot={{ r: 6 }}
+                      />
+                    </LineChart>
+                  )}
+                </ResponsiveContainer>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-lg p-4 shadow border border-gray-200">
+              <h3 className="text-lg font-semibold mb-4 text-gray-700">Statistiques clés</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-gray-500">Total</p>
+                  <p className="text-2xl font-semibold text-blue-600">
+                    {keyStats.total.toLocaleString()} {selectedIndicator === 'chiffreAffaire' || selectedIndicator === 'remuneration' ? '€' : ''}
+                  </p>
+                </div>
+                
+                <div>
+                  <p className="text-sm text-gray-500">Moyenne</p>
+                  <p className="text-2xl font-semibold text-blue-600">
+                    {keyStats.average.toLocaleString(undefined, {maximumFractionDigits: 1})} {selectedIndicator === 'chiffreAffaire' || selectedIndicator === 'remuneration' ? '€' : ''}
+                  </p>
+                </div>
+                
+                <div>
+                  <p className="text-sm text-gray-500">Évolution</p>
+                  <p className={`text-2xl font-semibold ${keyStats.growth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {keyStats.growth >= 0 ? '+' : ''}{keyStats.growth.toFixed(1)}%
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="bg-white rounded-lg p-4 shadow border border-gray-200">
+              <h3 className="text-lg font-semibold mb-4 text-gray-700">
+                Répartition des clients par secteur
+              </h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={sectorDistribution}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={true}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({name, percent}) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                    >
+                      {sectorDistribution.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => `${value}%`} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 shadow border border-gray-200">
+              <h3 className="text-lg font-semibold mb-4 text-gray-700">
+                Comparaison par secteur - {indicators.find(i => i.key === selectedIndicator)?.label}
+              </h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={getComparativeSectorData()} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" />
+                    <YAxis dataKey="name" type="category" width={80} />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#4f46e5" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+            <h3 className="text-xl font-semibold mb-4 text-gray-800">Analyse du trimestre</h3>
+            <p className="text-gray-700 mb-3">
+              Le dernier trimestre montre une <strong>croissance continue</strong> dans la création d'entreprises, avec une augmentation de 5.8% par rapport au trimestre précédent. Le secteur des consultants reste le plus dynamique avec 130 nouvelles créations.
+            </p>
+            <p className="text-gray-700 mb-3">
+              La rémunération moyenne des dirigeants a augmenté de 4.8%, atteignant 1100€ mensuels, tandis que le chiffre d'affaires moyen a progressé de 6.9% pour atteindre 31 000€.
+            </p>
+            <p className="text-gray-700">
+              Les dissolutions d'entreprises poursuivent leur tendance à la baisse (-9.1%), ce qui témoigne d'une résilience accrue des TPE dans le contexte économique actuel.
+            </p>
+          </div>
+
+          <div className="mt-6 text-center">
+            <p className="text-gray-600 mb-4">
+              Données issues de l'analyse de 25 000 clients actifs | Mise à jour trimestrielle
+            </p>
+            <div className="flex justify-center space-x-4">
+              <a href="#" className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                Télécharger le rapport complet (PDF)
+              </a>
+              <a href="#" className="border border-blue-600 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-50 transition">
+                Partager les résultats
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Pourquoi ce baromètre économique ?</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="border border-gray-200 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-blue-700 mb-2">Pour nos clients</h3>
+              <p className="text-gray-700">
+                Nous offrons à nos clients une vision claire des tendances de leur secteur, leur permettant de mieux anticiper les évolutions et prendre des décisions éclairées pour leur entreprise.
+              </p>
+            </div>
+            
+            <div className="border border-gray-200 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-blue-700 mb-2">Pour nos partenaires</h3>
+              <p className="text-gray-700">
+                Nous fournissons des données fiables et actualisées sur la santé économique des TPE, créant ainsi une base solide pour des partenariats stratégiques et des initiatives conjointes.
+              </p>
+            </div>
+            
+            <div className="border border-gray-200 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-blue-700 mb-2">Pour la presse</h3>
+              <p className="text-gray-700">
+                Nous mettons à disposition des analyses détaillées sur le dynamisme entrepreneurial français, offrant aux médias des informations précieuses pour leurs reportages économiques.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <footer className="bg-white rounded-xl shadow-md p-6 text-center">
+          <p className="text-gray-600 mb-4">
+            © 2025 - Baromètre Économique des Indépendants et TPE
+          </p>
+          <div className="flex justify-center space-x-4">
+            <a href="#" className="text-blue-600 hover:underline">Mentions légales</a>
+            <a href="#" className="text-blue-600 hover:underline">Méthodologie</a>
+            <a href="#" className="text-blue-600 hover:underline">Contact</a>
+          </div>
+        </footer>
